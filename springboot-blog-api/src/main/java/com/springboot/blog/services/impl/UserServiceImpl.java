@@ -1,9 +1,12 @@
 package com.springboot.blog.services.impl;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
 import com.springboot.blog.entities.User;
 import com.springboot.blog.exception.ResourceNotFoundException;
@@ -57,23 +60,17 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public UserDto partialUpdateUser(UserDto userDto, Integer userId) {
+	public UserDto partialUpdateUser(Map<String, Object> fields, Integer userId) {
 		
 		User user = this.userRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-		if (userDto.getName() != null) {
-			user.setName(userDto.getName());
+		if(user != null) {
+			fields.forEach((key, value) -> {
+				Field field = ReflectionUtils.findField(User.class, key);
+				field.setAccessible(true);
+				ReflectionUtils.setField(field, user, value);
+			});
 		}
-		if (userDto.getEmail() != null) {
-			user.setEmail(userDto.getEmail());
-		}
-		if (userDto.getPassword() != null) {
-			user.setPassword(userDto.getPassword());
-		}
-		if (userDto.getAbout() != null) {
-			user.setAbout(userDto.getAbout());
-		}
-
 		return UserMapper.mapToUserDto(this.userRepo.save(user));
 	}
 

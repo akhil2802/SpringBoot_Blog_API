@@ -1,6 +1,7 @@
 package com.springboot.blog.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,8 +51,8 @@ public class UserController {
 	// PATCH:
 	
 	@PatchMapping("/{userId}")
-	public ResponseEntity<UserDto> patchUser(@Valid @RequestBody UserDto userDto, @PathVariable Integer userId) {
-		return ResponseEntity.ok(this.userService.partialUpdateUser(userDto, userId));
+	public ResponseEntity<UserDto> patchUser(@Valid @RequestBody Map<String, Object> fields, @PathVariable Integer userId) {
+		return ResponseEntity.ok(this.userService.partialUpdateUser(fields, userId));
 	}
 	
 	// DELETE:

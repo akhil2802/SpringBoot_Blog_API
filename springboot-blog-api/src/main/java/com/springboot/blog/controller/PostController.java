@@ -84,7 +84,7 @@ public class PostController {
 	}
 
 	// GET ALL BY USER:
-
+ 
 	@GetMapping("/user/{userId}/posts")
 	public ResponseEntity<List<PostDto>> getPostsByUser(@PathVariable Integer userId) {
 		return new ResponseEntity<List<PostDto>>(this.postService.getPostsByUser(userId), HttpStatus.OK);
@@ -98,5 +98,9 @@ public class PostController {
 	}
 
 	// SEARCH:
+	@GetMapping("/posts/search/{keyword}")
+	public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable String keyword) {
+		return ResponseEntity.ok(this.postService.searchPosts(keyword));
+	}
 
 }

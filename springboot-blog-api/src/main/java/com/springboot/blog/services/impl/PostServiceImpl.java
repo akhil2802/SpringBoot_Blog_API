@@ -97,9 +97,9 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public GetAllResponse getPosts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-		
-		Sort sort = (sortOrder.equalsIgnoreCase("asc"))?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
-		
+
+		Sort sort = (sortOrder.equalsIgnoreCase("asc")) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
 		Page<Post> pagePost = this.postRepo.findAll(PageRequest.of(pageNumber, pageSize, sort));
 
 		return new GetAllResponse(
@@ -138,7 +138,7 @@ public class PostServiceImpl implements PostService {
 				.orElseThrow(() -> new ResourceNotFoundException("Category", "Category Id", categoryId.toString()));
 
 		List<Post> posts = this.postRepo.findByCategory(category);
-		
+
 		return posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
 	}
 
@@ -159,8 +159,8 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostDto> searchPosts(String keyword) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.postRepo.searchByTitle("%"+ keyword +"%").stream()
+				.map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
 	}
 
 }

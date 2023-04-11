@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -95,9 +96,11 @@ public class PostServiceImpl implements PostService {
 	// GET ALL:
 
 	@Override
-	public GetAllResponse getPosts(Integer pageNumber, Integer pageSize) {
-
-		Page<Post> pagePost = this.postRepo.findAll(PageRequest.of(pageNumber, pageSize));
+	public GetAllResponse getPosts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+		
+		Sort sort = (sortOrder.equalsIgnoreCase("asc"))?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
+		
+		Page<Post> pagePost = this.postRepo.findAll(PageRequest.of(pageNumber, pageSize, sort));
 
 		return new GetAllResponse(
 				pagePost.getContent().stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(

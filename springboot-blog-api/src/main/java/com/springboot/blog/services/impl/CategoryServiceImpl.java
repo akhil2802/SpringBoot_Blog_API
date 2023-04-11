@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -72,9 +73,11 @@ public class CategoryServiceImpl implements CategoryService {
 	// GET ALL:
 
 	@Override
-	public GetAllResponse getCategories(Integer pageNumber, Integer pageSize) {
+	public GetAllResponse getCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+		
+		Sort sort = (sortOrder.equalsIgnoreCase("asc"))?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
 
-		Page<Category> pageCategory = this.categoryRepo.findAll(PageRequest.of(pageNumber, pageSize));
+		Page<Category> pageCategory = this.categoryRepo.findAll(PageRequest.of(pageNumber, pageSize, sort));
 
 		return new GetAllResponse(
 				pageCategory.getContent().stream().map((category) -> this.modelMapper.map(category, CategoryDto.class))

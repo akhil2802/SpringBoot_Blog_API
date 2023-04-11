@@ -18,7 +18,7 @@ public interface PostService {
 	PostDto patchPost(Map<String, Object> fields, Integer postId);
 	
 	// GET ALL:
-	GetAllResponse getPosts(Integer pageNumber, Integer pageSize);
+	GetAllResponse getPosts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 	
 	// GET ONE:
 	PostDto getPostById(Integer postId);

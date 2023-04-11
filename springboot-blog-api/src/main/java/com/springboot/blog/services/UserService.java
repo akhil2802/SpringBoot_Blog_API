@@ -20,7 +20,7 @@ public interface UserService {
 	UserDto getUserById(Integer userId);
 
 	// GET ALL:
-	GetAllResponse getAllUsers(Integer pageNumber, Integer pageSize);
+	GetAllResponse getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
 	// DELETE:
 	void deleteUser(Integer userId);

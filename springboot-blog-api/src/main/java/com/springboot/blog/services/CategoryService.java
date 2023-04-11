@@ -18,7 +18,7 @@ public interface CategoryService {
 	CategoryDto patchCategory(Map<String, Object> fields, Integer categoryId);
 	
 	// GET ALL:
-	GetAllResponse getCategories(Integer pageNumber, Integer pageSize);
+	GetAllResponse getCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 	
 	// GET ONE:
 	CategoryDto getCategory(Integer categoryId);

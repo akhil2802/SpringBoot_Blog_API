@@ -1,8 +1,8 @@
 package com.springboot.blog.services;
 
-import java.util.List;
 import java.util.Map;
 
+import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.payloads.UserDto;
 
 public interface UserService {
@@ -20,7 +20,7 @@ public interface UserService {
 	UserDto getUserById(Integer userId);
 
 	// GET ALL:
-	List<UserDto> getAllUsers(Integer pageNumber, Integer pageSize);
+	GetAllResponse getAllUsers(Integer pageNumber, Integer pageSize);
 
 	// DELETE:
 	void deleteUser(Integer userId);

@@ -3,6 +3,7 @@ package com.springboot.blog.services;
 import java.util.List;
 import java.util.Map;
 
+import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.payloads.PostDto;
 
 public interface PostService {
@@ -17,7 +18,7 @@ public interface PostService {
 	PostDto patchPost(Map<String, Object> fields, Integer postId);
 	
 	// GET ALL:
-	List<PostDto> getPosts(Integer pageNumber, Integer pageSize);
+	GetAllResponse getPosts(Integer pageNumber, Integer pageSize);
 	
 	// GET ONE:
 	PostDto getPostById(Integer postId);

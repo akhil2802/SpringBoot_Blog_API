@@ -1,6 +1,5 @@
 package com.springboot.blog.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.blog.payloads.ApiResponse;
+import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.payloads.UserDto;
 import com.springboot.blog.services.UserService;
 
@@ -71,7 +71,7 @@ public class UserController {
 	// GET ALL:
 
 	@GetMapping("")
-	public ResponseEntity<List<UserDto>> getUsers(
+	public ResponseEntity<GetAllResponse> getUsers(
 			@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
 			@RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize) {
 		return ResponseEntity.ok(this.userService.getAllUsers(pageNumber, pageSize));

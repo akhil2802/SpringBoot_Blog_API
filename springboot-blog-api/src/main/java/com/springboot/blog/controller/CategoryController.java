@@ -1,6 +1,5 @@
 package com.springboot.blog.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.blog.payloads.ApiResponse;
 import com.springboot.blog.payloads.CategoryDto;
+import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.services.CategoryService;
 
 import jakarta.validation.Valid;
@@ -54,8 +55,10 @@ public class CategoryController {
 
 	// GET ALL:
 	@GetMapping("/")
-	public ResponseEntity<List<CategoryDto>> getCategories() {
-		return ResponseEntity.ok(this.categoryService.getCategories());
+	public ResponseEntity<GetAllResponse> getCategories(
+			@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "3", required = false) Integer pageSize) {
+		return ResponseEntity.ok(this.categoryService.getCategories(pageNumber, pageSize));
 	}
 
 	// GET ONE:
@@ -63,7 +66,7 @@ public class CategoryController {
 	public ResponseEntity<CategoryDto> getSingleCategory(@PathVariable Integer categoryId) {
 		return ResponseEntity.ok(this.categoryService.getCategory(categoryId));
 	}
-	
+
 	// DELETE:
 	@DeleteMapping("/{categoryId}")
 	public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Integer categoryId) {

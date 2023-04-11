@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -21,12 +25,14 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserServiceImpl implements UserService {
 
-	private final UserRepository userRepo;
+//	private final UserRepository userRepo;
+//
+//	public UserServiceImpl(UserRepository userRepo) {
+//		this.userRepo = userRepo;
+//	}
 
-	public UserServiceImpl(UserRepository userRepo) {
-		this.userRepo = userRepo;
-	}
-	
+	@Autowired
+	private UserRepository userRepo;
 	// CREATE:
 
 	@Override
@@ -86,9 +92,13 @@ public class UserServiceImpl implements UserService {
 	// GET ALL
 	
 	@Override
-	public List<UserDto> getAllUsers() {
-		List<User> users = this.userRepo.findAll();
-		return users.stream().map(UserMapper::mapToUserDto).collect(Collectors.toList());
+	public List<UserDto> getAllUsers(Integer pageNumber, Integer pageSize) {
+		
+		Pageable p = PageRequest.of(pageNumber, pageSize);
+		Page<User> pageUser = this.userRepo.findAll(p);
+		List<User> userContents = pageUser.getContent();
+		
+		return userContents.stream().map(UserMapper::mapToUserDto).collect(Collectors.toList());
 	}
 
 	// DELETE:

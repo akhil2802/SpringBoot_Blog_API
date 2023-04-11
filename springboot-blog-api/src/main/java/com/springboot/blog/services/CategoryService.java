@@ -1,9 +1,9 @@
 package com.springboot.blog.services;
 
-import java.util.List;
 import java.util.Map;
 
 import com.springboot.blog.payloads.CategoryDto;
+import com.springboot.blog.payloads.GetAllResponse;
 
 
 public interface CategoryService {
@@ -18,7 +18,7 @@ public interface CategoryService {
 	CategoryDto patchCategory(Map<String, Object> fields, Integer categoryId);
 	
 	// GET ALL:
-	List<CategoryDto> getCategories();
+	GetAllResponse getCategories(Integer pageNumber, Integer pageSize);
 	
 	// GET ONE:
 	CategoryDto getCategory(Integer categoryId);

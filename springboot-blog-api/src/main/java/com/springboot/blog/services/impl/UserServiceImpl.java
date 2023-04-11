@@ -15,6 +15,7 @@ import org.springframework.util.ReflectionUtils;
 import com.springboot.blog.entities.User;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.mappers.UserMapper;
+import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.payloads.UserDto;
 import com.springboot.blog.repositories.UserRepository;
 import com.springboot.blog.services.UserService;
@@ -92,13 +93,23 @@ public class UserServiceImpl implements UserService {
 	// GET ALL
 	
 	@Override
-	public List<UserDto> getAllUsers(Integer pageNumber, Integer pageSize) {
+	public GetAllResponse getAllUsers(Integer pageNumber, Integer pageSize) {
 		
 		Pageable p = PageRequest.of(pageNumber, pageSize);
 		Page<User> pageUser = this.userRepo.findAll(p);
-		List<User> userContents = pageUser.getContent();
+		List<User> users = pageUser.getContent();
+		List<UserDto> userDtos = users.stream().map(UserMapper::mapToUserDto).collect(Collectors.toList());
 		
-		return userContents.stream().map(UserMapper::mapToUserDto).collect(Collectors.toList());
+		GetAllResponse getAllResponse = new GetAllResponse();
+		getAllResponse.setContent(userDtos);
+		getAllResponse.setPageNumber(pageUser.getNumber());
+		getAllResponse.setPageSize(pageUser.getSize());
+		getAllResponse.setNumberOfElements(pageUser.getNumberOfElements());
+		getAllResponse.setTotalNumberOfElements(pageUser.getTotalElements());
+		getAllResponse.setTotalPages(pageUser.getTotalPages());
+		getAllResponse.setLastPage(pageUser.isLast());
+		
+		return getAllResponse;
 	}
 
 	// DELETE:

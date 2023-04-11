@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -15,6 +15,7 @@ import com.springboot.blog.entities.Category;
 import com.springboot.blog.entities.Post;
 import com.springboot.blog.entities.User;
 import com.springboot.blog.exception.ResourceNotFoundException;
+import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.payloads.PostDto;
 import com.springboot.blog.repositories.CategoryRepository;
 import com.springboot.blog.repositories.PostRepository;
@@ -94,12 +95,15 @@ public class PostServiceImpl implements PostService {
 	// GET ALL:
 
 	@Override
-	public List<PostDto> getPosts(Integer pageNumber, Integer pageSize) {
-		
-		Pageable p = PageRequest.of(pageNumber, pageSize);
+	public GetAllResponse getPosts(Integer pageNumber, Integer pageSize) {
 
-		return this.postRepo.findAll(p).getContent().stream().map((post) -> this.modelMapper.map(post, PostDto.class))
-				.collect(Collectors.toList());
+		Page<Post> pagePost = this.postRepo.findAll(PageRequest.of(pageNumber, pageSize));
+
+		return new GetAllResponse(
+				pagePost.getContent().stream().map((post) -> this.modelMapper.map(post, PostDto.class))
+						.collect(Collectors.toList()),
+				pagePost.getNumber(), pagePost.getSize(), pagePost.getNumberOfElements(), pagePost.getTotalElements(), pagePost.getTotalPages(),
+				pagePost.isLast());
 	}
 
 	// GET ONE:
@@ -131,7 +135,7 @@ public class PostServiceImpl implements PostService {
 				.orElseThrow(() -> new ResourceNotFoundException("Category", "Category Id", categoryId.toString()));
 
 		List<Post> posts = this.postRepo.findByCategory(category);
-
+		
 		return posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
 	}
 

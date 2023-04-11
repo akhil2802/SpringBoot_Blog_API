@@ -8,10 +8,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-<<<<<<< HEAD
-=======
-import org.springframework.data.domain.Pageable;
->>>>>>> adcbac23a58f15769937523596ee272cd6ba6119
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -78,7 +74,6 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public GetAllResponse getCategories(Integer pageNumber, Integer pageSize) {
 
-<<<<<<< HEAD
 		Page<Category> pageCategory = this.categoryRepo.findAll(PageRequest.of(pageNumber, pageSize));
 
 		return new GetAllResponse(
@@ -86,17 +81,6 @@ public class CategoryServiceImpl implements CategoryService {
 						.collect(Collectors.toList()),
 				pageCategory.getNumber(), pageCategory.getSize(), pageCategory.getNumberOfElements(),
 				pageCategory.getTotalElements(), pageCategory.getTotalPages(), pageCategory.isLast());
-=======
-		Pageable p = PageRequest.of(pageNumber, pageSize);
-		Page<Category> pageCategory = this.categoryRepo.findAll(p);
-		List<Category> categories = pageCategory.getContent();
-		List<CategoryDto> categoryDtos = categories.stream()
-				.map((category) -> this.modelMapper.map(category, CategoryDto.class)).collect(Collectors.toList());
-
-		return new GetAllResponse(categoryDtos, pageCategory.getNumber(), pageCategory.getSize(),
-				pageCategory.getNumberOfElements(), pageCategory.getTotalElements(), pageCategory.getTotalPages(),
-				pageCategory.isLast());
->>>>>>> adcbac23a58f15769937523596ee272cd6ba6119
 	}
 
 	// GET ONE:

@@ -100,7 +100,6 @@ public class UserServiceImpl implements UserService {
 		List<User> users = pageUser.getContent();
 		List<UserDto> userDtos = users.stream().map(UserMapper::mapToUserDto).collect(Collectors.toList());
 		
-<<<<<<< HEAD
 		GetAllResponse getResponse = new GetAllResponse();
 		getResponse.setContent(userDtos);
 		getResponse.setPageNumber(pageUser.getNumber());
@@ -111,18 +110,6 @@ public class UserServiceImpl implements UserService {
 		getResponse.setLastPage(pageUser.isLast());
 		
 		return getResponse;
-=======
-		GetAllResponse getAllResponse = new GetAllResponse();
-		getAllResponse.setContent(userDtos);
-		getAllResponse.setPageNumber(pageUser.getNumber());
-		getAllResponse.setPageSize(pageUser.getSize());
-		getAllResponse.setNumberOfElements(pageUser.getNumberOfElements());
-		getAllResponse.setTotalNumberOfElements(pageUser.getTotalElements());
-		getAllResponse.setTotalPages(pageUser.getTotalPages());
-		getAllResponse.setLastPage(pageUser.isLast());
-		
-		return getAllResponse;
->>>>>>> adcbac23a58f15769937523596ee272cd6ba6119
 	}
 
 	// DELETE:

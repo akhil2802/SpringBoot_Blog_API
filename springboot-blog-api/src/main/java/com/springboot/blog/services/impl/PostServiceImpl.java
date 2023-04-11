@@ -100,10 +100,17 @@ public class PostServiceImpl implements PostService {
 		Page<Post> pagePost = this.postRepo.findAll(PageRequest.of(pageNumber, pageSize));
 
 		return new GetAllResponse(
+<<<<<<< HEAD
 				pagePost.getContent().stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(
 						Collectors.toList()),
 				pagePost.getNumber(), pagePost.getSize(), pagePost.getNumberOfElements(), pagePost.getTotalElements(),
 				pagePost.getTotalPages(), pagePost.isLast());
+=======
+				pagePost.getContent().stream().map((post) -> this.modelMapper.map(post, PostDto.class))
+						.collect(Collectors.toList()),
+				pagePost.getNumber(), pagePost.getSize(), pagePost.getNumberOfElements(), pagePost.getTotalElements(), pagePost.getTotalPages(),
+				pagePost.isLast());
+>>>>>>> adcbac23a58f15769937523596ee272cd6ba6119
 	}
 
 	// GET ONE:
@@ -135,7 +142,7 @@ public class PostServiceImpl implements PostService {
 				.orElseThrow(() -> new ResourceNotFoundException("Category", "Category Id", categoryId.toString()));
 
 		List<Post> posts = this.postRepo.findByCategory(category);
-
+		
 		return posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
 	}
 

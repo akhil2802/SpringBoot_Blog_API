@@ -1,10 +1,15 @@
 package com.springboot.blog.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,13 +20,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.springboot.blog.config.AppConstants;
 import com.springboot.blog.payloads.ApiResponse;
 import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.payloads.PostDto;
+import com.springboot.blog.services.FileService;
 import com.springboot.blog.services.PostService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -29,9 +37,14 @@ import jakarta.validation.Valid;
 public class PostController {
 
 	private final PostService postService;
+	private final FileService fileService;
+	
+	@Value("${project.image}")
+	private String path;
 
-	public PostController(PostService postService) {
+	public PostController(PostService postService, FileService fileService) {
 		this.postService = postService;
+		this.fileService = fileService;
 	}
 
 	// CREATE:
@@ -85,7 +98,7 @@ public class PostController {
 	}
 
 	// GET ALL BY USER:
- 
+
 	@GetMapping("/user/{userId}/posts")
 	public ResponseEntity<List<PostDto>> getPostsByUser(@PathVariable Integer userId) {
 		return new ResponseEntity<List<PostDto>>(this.postService.getPostsByUser(userId), HttpStatus.OK);
@@ -99,9 +112,35 @@ public class PostController {
 	}
 
 	// SEARCH:
+
 	@GetMapping("/posts/search/{keyword}")
 	public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable String keyword) {
 		return ResponseEntity.ok(this.postService.searchPosts(keyword));
+	}
+
+	// Post Image Upload:
+
+	@PostMapping("/post/image/upload/{postId}")
+	public ResponseEntity<PostDto> uploadPostImage (
+			@RequestParam(value = "image") MultipartFile image,
+			@PathVariable Integer postId) throws IOException {
+		
+		PostDto postDto = this.postService.getPostById(postId);
+		
+		String imageName = this.fileService.uploadImage(path, image);
+		postDto.setImageName(imageName);		
+		
+		return ResponseEntity.ok(this.postService.updatePost(postDto, postId));
+	}
+	
+	// Post Image Download:
+	
+	@GetMapping(value = "post/image/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
+	public void downloadPostImage(@PathVariable String imageName, HttpServletResponse response) throws IOException {
+		
+		InputStream resource = this.fileService.getResource(path, imageName);
+		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+		StreamUtils.copy(resource, response.getOutputStream());
 	}
 
 }

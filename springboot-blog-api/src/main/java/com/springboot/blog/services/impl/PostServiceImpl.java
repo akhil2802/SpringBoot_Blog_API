@@ -1,9 +1,11 @@
-  package com.springboot.blog.services.impl;
+package com.springboot.blog.services.impl;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -23,23 +25,16 @@ import com.springboot.blog.repositories.PostRepository;
 import com.springboot.blog.repositories.UserRepository;
 import com.springboot.blog.services.PostService;
 
-import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
 	private final PostRepository postRepo;
 	private final ModelMapper modelMapper;
 	private final UserRepository userRepo;
 	private final CategoryRepository categoryRepo;
-
-	public PostServiceImpl(PostRepository postRepo, ModelMapper modelMapper, UserRepository userRepo,
-			CategoryRepository categoryRepo) {
-		this.postRepo = postRepo;
-		this.modelMapper = modelMapper;
-		this.userRepo = userRepo;
-		this.categoryRepo = categoryRepo;
-	}
 
 	// CREATE:
 
@@ -66,9 +61,13 @@ public class PostServiceImpl implements PostService {
 
 		Post post = this.postRepo.findById(postId)
 				.orElseThrow(() -> new ResourceNotFoundException("Post", "Post Id", postId.toString()));
+
+		Category category = this.categoryRepo.findById(postDto.getCategory().getCategoryId()).get();
+
 		post.setTitle(postDto.getTitle());
 		post.setContent(postDto.getContent());
 		post.setImageName(postDto.getImageName());
+		post.setCategory(category);
 
 		return this.modelMapper.map(this.postRepo.save(post), PostDto.class);
 	}
@@ -159,7 +158,7 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostDto> searchPosts(String keyword) {
-		return this.postRepo.searchByTitle("%"+ keyword +"%").stream()
+		return this.postRepo.searchByTitle("%" + keyword + "%").stream()
 				.map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
 	}
 

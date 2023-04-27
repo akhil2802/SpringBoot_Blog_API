@@ -6,6 +6,9 @@ import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.payloads.UserDto;
 
 public interface UserService {
+	
+	//REGISTER USER:
+	UserDto registerNewUser(UserDto userDto);
 
 	// CREATE:
 	UserDto createUser(UserDto userDto);

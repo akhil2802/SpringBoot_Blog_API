@@ -1,20 +1,23 @@
 package com.springboot.blog.payloads;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-
+	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private int id;
 
 	@NotEmpty
@@ -22,12 +25,17 @@ public class UserDto {
 	private String name;
 
 	@Email(message = "Entered Email address is not valid!")
+	@NotEmpty(message = "Email is required !!")
 	private String email;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@NotEmpty
  	@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "Password must be at least 8 characters and contain at least one letter and one number")
 	private String password;
 
 	@NotEmpty
 	private String about;
+	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	private Set<RoleDto> roles = new HashSet<>();
 }

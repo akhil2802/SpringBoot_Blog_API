@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -19,14 +18,15 @@ import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.repositories.CategoryRepository;
 import com.springboot.blog.services.CategoryService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
-	@Autowired
-	private ModelMapper modelMapper;
+	private final ModelMapper modelMapper;
 
-	@Autowired
-	private CategoryRepository categoryRepo;
+	private final CategoryRepository categoryRepo;
 
 	// CREATE:
 

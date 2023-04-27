@@ -1,8 +1,10 @@
 package com.springboot.blog.exception;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ResourceNotFoundException extends RuntimeException {
 	
 	private static final long serialVersionUID = 1L;

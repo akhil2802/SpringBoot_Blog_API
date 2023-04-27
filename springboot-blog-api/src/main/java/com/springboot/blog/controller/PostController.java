@@ -5,10 +5,14 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,11 +33,8 @@ import com.springboot.blog.payloads.PostDto;
 import com.springboot.blog.services.FileService;
 import com.springboot.blog.services.PostService;
 
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api/v1/")
 public class PostController {
 
 	private final PostService postService;
@@ -50,6 +51,7 @@ public class PostController {
 	// CREATE:
 
 	@PostMapping("/user/{userId}/category/{categoryId}/posts")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto, @PathVariable Integer userId,
 			@PathVariable Integer categoryId) {
 		return new ResponseEntity<PostDto>(this.postService.createPost(postDto, userId, categoryId),
@@ -59,6 +61,7 @@ public class PostController {
 	// UPDATE:
 
 	@PutMapping("/posts/{postId}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable Integer postId) {
 		return ResponseEntity.ok(this.postService.updatePost(postDto, postId));
 	}
@@ -66,6 +69,7 @@ public class PostController {
 	// PATCH:
 
 	@PatchMapping("/posts/{postId}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<PostDto> patchPost(@Valid @RequestBody Map<String, Object> fields,
 			@PathVariable Integer postId) {
 		return ResponseEntity.ok(this.postService.patchPost(fields, postId));
@@ -77,14 +81,14 @@ public class PostController {
 	public ResponseEntity<GetAllResponse> getAllPosts(
 			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
 			@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-			@RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+			@RequestParam(value = "sortBy", defaultValue = AppConstants.POST_SORT_BY, required = false) String sortBy,
 			@RequestParam(value = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder) {
 		return ResponseEntity.ok(this.postService.getPosts(pageNumber, pageSize, sortBy, sortOrder));
 	}
 
 	// GET ONE:
 
-	@GetMapping("posts/{postId}")
+	@GetMapping("/posts/{postId}")
 	public ResponseEntity<PostDto> getSinglePost(@PathVariable Integer postId) {
 		return ResponseEntity.ok(this.postService.getPostById(postId));
 	}
@@ -92,6 +96,7 @@ public class PostController {
 	// DELETE:
 
 	@DeleteMapping("/posts/{postId}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId) {
 		return new ResponseEntity<ApiResponse>(
 				new ApiResponse("Post with Post Id" + postId + "has been deleted successfully!", true), HttpStatus.OK);
@@ -113,7 +118,7 @@ public class PostController {
 
 	// SEARCH:
 
-	@GetMapping("/posts/search/{keyword}")
+	@GetMapping("/posts/search/{keywords}")
 	public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable String keyword) {
 		return ResponseEntity.ok(this.postService.searchPosts(keyword));
 	}

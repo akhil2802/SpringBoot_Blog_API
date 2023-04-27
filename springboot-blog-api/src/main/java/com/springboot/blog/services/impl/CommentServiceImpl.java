@@ -11,18 +11,15 @@ import com.springboot.blog.repositories.CommentRepository;
 import com.springboot.blog.repositories.PostRepository;
 import com.springboot.blog.services.CommentService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 	
 	private final PostRepository postRepo;
 	private final CommentRepository commentRepo;
 	private final ModelMapper modelMapper;
-	
-	public CommentServiceImpl(PostRepository postRepo, CommentRepository commentRepo, ModelMapper modelMapper) {
-		this.postRepo = postRepo;
-		this.commentRepo = commentRepo;
-		this.modelMapper = modelMapper;
-	}
 
 	@Override
 	public CommentDto createComment(CommentDto commentDto, Integer postId) {

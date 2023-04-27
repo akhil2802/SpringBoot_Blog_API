@@ -2,8 +2,11 @@ package com.springboot.blog.controller;
 
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,10 +24,8 @@ import com.springboot.blog.payloads.GetAllResponse;
 import com.springboot.blog.payloads.UserDto;
 import com.springboot.blog.services.UserService;
 
-import jakarta.validation.Valid;
-
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
 	private final UserService userService;
@@ -59,7 +60,8 @@ public class UserController {
 	}
 
 	// DELETE:
-
+	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{userId}")
 	public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer userId) {
 		this.userService.deleteUser(userId);
@@ -70,12 +72,12 @@ public class UserController {
 	}
 
 	// GET ALL:
-
-	@GetMapping("")
+	
+	@GetMapping
 	public ResponseEntity<GetAllResponse> getUsers(
 			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
 			@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-			@RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+			@RequestParam(value = "sortBy", defaultValue = AppConstants.USER_SORT_BY, required = false) String sortBy,
 			@RequestParam(value = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder) {
 		return ResponseEntity.ok(this.userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder));
 	}
